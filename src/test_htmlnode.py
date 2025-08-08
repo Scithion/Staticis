@@ -1,10 +1,20 @@
+import unittest
 from htmlnode import *
 
-def test_htmlnode():
-    test1 = HTMLNode(tag="p", value="This is a paragraph", props={"style": "color: red;"})
-    test3 = HTMLNode(tag="h5", value="minor header")
-    test2 = HTMLNode(tag="h2", value="Secondary header", children=[test1,test3], props={"style": "font-size: 30px"})
+class TestHTMLNode(unittest.TestCase):
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
 
-    print(test2.__repr__())
-    
-test_htmlnode()
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+if __name__ == "__main__":
+    unittest.main()

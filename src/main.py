@@ -1,11 +1,24 @@
-from textnode import *
+import os
+import shutil
+from gencontent import *
+from copystatic import copy_files_recursive
+
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+
+
 
 def main():
-    print("Initializing!")
-    gweth = TextNode("gurps is interesting", TextType.BOLD, None)
-    print(gweth.__repr__())
-    nonc = TextNode("This comment describes Fear Not/Cattywampus Design Goals", TextType.LINK, "https://www.reddit.com/r/RPGdesign/comments/1kvad25/if_you_could_design_your_dream_ttrpg_what_would/mu8h656/?context=3")
-    print(nonc.__repr__())
-    return
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+    generate_pages_recursive("content", "template.html", "public")
+ 
+
 
 main()
