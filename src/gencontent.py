@@ -16,21 +16,24 @@ def generate_page(from_path, template_path, dest_path, basepath="/"):
     node = markdown_to_html_node(markdown_content)
     html = node.to_html()
 
+    # Fix image and link paths in content HTML, too!
+    base = basepath.rstrip("/") if basepath != "/" else ""
+    html = html.replace('src="/', f'src="{base}/')
+    html = html.replace('href="/', f'href="{base}/')
+
     title = extract_title(markdown_content)
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
 
-    # Trim trailing slash except when basepath is root
-    base = basepath.rstrip("/") if basepath != "/" else ""
-    template = template.replace('href="/', f'href="{base}/')
+    # Also fix paths in template HTML (just in case)
     template = template.replace('src="/', f'src="{base}/')
+    template = template.replace('href="/', f'href="{base}/')
 
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":
         os.makedirs(dest_dir_path, exist_ok=True)
     with open(dest_path, "w") as to_file:
         to_file.write(template)
-
 
 def extract_title(md):
     lines = md.split("\n")
